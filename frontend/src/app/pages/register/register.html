@@ -1,0 +1,51 @@
+<div class="register-container">
+  <mat-card class="register-card">
+    <mat-card-header>
+      <mat-card-title>
+        <!-- <mat-icon class="app-icon">people</mat-icon> -->
+        Join ProfileBook
+      </mat-card-title>
+      <mat-card-subtitle>Create your account to start connecting</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="register-form">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Username</mat-label>
+          <input matInput [(ngModel)]="username" placeholder="Choose a username" />
+          <!-- <mat-icon matSuffix>person</mat-icon> -->
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Password</mat-label>
+          <input matInput type="password" [(ngModel)]="password" placeholder="Create a password" />
+          <!-- <mat-icon matSuffix>lock</mat-icon> -->
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Confirm Password</mat-label>
+          <input matInput type="password" [(ngModel)]="confirmPassword" placeholder="Confirm your password" />
+          <!-- <mat-icon matSuffix>lock</mat-icon> -->
+        </mat-form-field>
+
+        <button 
+          mat-raised-button 
+          color="primary" 
+          class="register-button full-width"
+          (click)="register()"
+          [disabled]="isLoading">
+          <!-- <mat-icon *ngIf="!isLoading">person_add</mat-icon> -->
+          <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+          {{ isLoading ? 'Creating Account...' : 'Create Account' }}
+        </button>
+      </div>
+    </mat-card-content>
+
+    <mat-card-actions class="card-actions">
+      <p class="login-link">
+        Already have an account?
+        <a (click)="goToLogin()" class="login-text">Sign in here</a>
+      </p>
+    </mat-card-actions>
+  </mat-card>
+</div>

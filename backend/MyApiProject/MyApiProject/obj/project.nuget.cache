@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "uNaMbzmKyaM=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Pratiksha\\Desktop\\Capstone Project\\MyProfileBook\\backend\\MyApiProject\\MyApiProject\\MyApiProject.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Pratiksha\\.nuget\\packages\\microsoft.aspnetcore.openapi\\9.0.7\\microsoft.aspnetcore.openapi.9.0.7.nupkg.sha512",
+    "C:\\Users\\Pratiksha\\.nuget\\packages\\microsoft.openapi\\1.6.17\\microsoft.openapi.1.6.17.nupkg.sha512"
+  ],
+  "logs": []
+}

@@ -1,0 +1,85 @@
+<div class="login-container">
+  <mat-card class="login-card">
+    <mat-card-header>
+      <mat-card-title>
+        <!-- <mat-icon class="app-icon">ProfileBook</mat-icon> -->
+        <h2>ProfileBook</h2>
+      </mat-card-title>
+      <mat-card-subtitle><b>with friends and share your moments</b></mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <mat-tab-group [(selectedIndex)]="selectedTab" class="login-tabs">
+        <mat-tab label="User Login">
+          <div class="login-form">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Username</mat-label>
+              <input matInput [(ngModel)]="username" placeholder="Enter your username" />
+              <mat-icon matSuffix></mat-icon>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Password</mat-label>
+              <input matInput type="password" [(ngModel)]="password" placeholder="Enter your password" />
+              <mat-icon matSuffix></mat-icon>
+            </mat-form-field>
+
+            <button 
+              mat-raised-button 
+              color="primary" 
+              class="login-button full-width"
+              (click)="login()"
+              [disabled]="isLoading">
+              <b>login</b>
+              <br><br>
+              <br><br>
+              <!-- <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner> -->
+              <!-- {{ isLoading ? 'Signing in...' : 'Sign In' }} -->
+            </button>
+          </div>
+        </mat-tab>
+
+        <mat-tab label="Admin Login">
+          <div class="admin-notice">
+            <!-- <b>Admin</b> -->
+            <p>Admin access for managing users, posts, and reports</p>
+          </div>
+          <div class="login-form">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Admin Username</mat-label>
+              <input matInput [(ngModel)]="username" placeholder="Enter admin username" />
+              <mat-icon matSuffix></mat-icon>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Admin Password</mat-label>
+              <input matInput type="password" [(ngModel)]="password" placeholder="Enter admin password" />
+              <mat-icon matSuffix></mat-icon>
+            </mat-form-field>
+
+            <button 
+              mat-raised-button 
+              color="accent" 
+              class="login-button full-width"
+              (click)="login()"
+              [disabled]="isLoading">
+              <b>admin</b>
+              <br>
+              <br>
+              <br><br>
+              <!-- <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+              {{ isLoading ? 'Signing in...' : 'Admin Sign In' }} -->
+            </button>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-card-content>
+
+    <mat-card-actions class="card-actions">
+      <p class="register-link">
+        Don't have an account?
+        <a (click)="switchToRegister()" class="register-text">Create your account</a>
+      </p>
+    </mat-card-actions>
+  </mat-card>
+</div>

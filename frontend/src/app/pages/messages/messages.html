@@ -1,0 +1,131 @@
+<div class="messages-container">
+  <!-- Header -->
+  <mat-toolbar color="primary" class="header-toolbar">
+    <button mat-icon-button (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <span class="header-title">Messages</span>
+    <span class="spacer"></span>
+    <button mat-icon-button>
+      <mat-icon>search</mat-icon>
+    </button>
+  </mat-toolbar>
+
+  <div class="messages-content">
+    <!-- Conversations List -->
+    <div class="conversations-panel" *ngIf="!selectedConversation">
+      <div class="conversations-header">
+        <h2>Conversations</h2>
+      </div>
+      
+      <div class="conversations-list" *ngIf="!isLoading">
+        <mat-list>
+          <mat-list-item 
+            *ngFor="let conversation of conversations" 
+            (click)="selectConversation(conversation)"
+            class="conversation-item">
+            <img 
+              [src]="conversation.user?.profileImage || 'assets/default-avatar.png'" 
+              alt="Profile" 
+              matListItemAvatar
+              class="conversation-avatar">
+            
+            <div matListItemTitle class="conversation-title">
+              {{ conversation.user?.username || 'Unknown User' }}
+            </div>
+            
+            <div matListItemLine class="conversation-preview">
+              {{ conversation.lastMessage.messageContent }}
+            </div>
+            
+            <div matListItemMeta class="conversation-meta">
+              <div class="message-time">
+                {{ formatTime(conversation.lastMessage.timestamp) }}
+              </div>
+              <mat-icon 
+                *ngIf="conversation.unreadCount > 0" 
+                class="unread-indicator">
+                circle
+              </mat-icon>
+            </div>
+          </mat-list-item>
+        </mat-list>
+      </div>
+
+      <!-- Loading State -->
+      <div class="loading-container" *ngIf="isLoading">
+        <mat-spinner></mat-spinner>
+        <p>Loading conversations...</p>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state" *ngIf="!isLoading && conversations.length === 0">
+        <mat-icon class="empty-icon">message</mat-icon>
+        <h3>No conversations yet</h3>
+        <p>Start a conversation with your friends!</p>
+      </div>
+    </div>
+
+    <!-- Chat View -->
+    <div class="chat-panel" *ngIf="selectedConversation">
+      <!-- Chat Header -->
+      <div class="chat-header">
+        <button mat-icon-button (click)="selectedConversation = null">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <img 
+          [src]="selectedConversation.user?.profileImage || 'assets/default-avatar.png'" 
+          alt="Profile" 
+          class="chat-avatar">
+        <div class="chat-user-info">
+          <h3>{{ selectedConversation.user?.username || 'Unknown User' }}</h3>
+          <p>Online</p>
+        </div>
+        <span class="spacer"></span>
+        <button mat-icon-button>
+          <mat-icon>more_vert</mat-icon>
+        </button>
+      </div>
+
+      <!-- Messages -->
+      <div class="messages-list">
+        <div 
+          *ngFor="let message of messages" 
+          class="message-item"
+          [class.my-message]="isMyMessage(message)"
+          [class.other-message]="!isMyMessage(message)">
+          
+          <div class="message-bubble">
+            <div class="message-content">
+              {{ message.messageContent }}
+            </div>
+            <div class="message-time">
+              {{ formatTime(message.timestamp) }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Message Input -->
+      <div class="message-input">
+        <mat-form-field appearance="outline" class="input-field">
+          <mat-label>Type a message...</mat-label>
+          <input 
+            matInput 
+            [(ngModel)]="newMessage"
+            (keyup.enter)="sendMessage()"
+            placeholder="Type your message here">
+        </mat-form-field>
+        <button 
+          mat-fab 
+          color="primary" 
+          (click)="sendMessage()"
+          [disabled]="!newMessage.trim() || isSending"
+          class="send-button">
+          <mat-icon *ngIf="!isSending">send</mat-icon>
+          <mat-spinner *ngIf="isSending" diameter="20"></mat-spinner>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

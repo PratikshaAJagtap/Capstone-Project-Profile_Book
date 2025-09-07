@@ -1,0 +1,61 @@
+/* Instagram-like global theme */
+@use '@angular/material' as mat;
+
+/* Colors inspired by Instagram gradient */
+$ig-start: #f58529;
+$ig-mid1: #f77737;
+$ig-mid2: #dd2a7b;
+$ig-mid3: #8134af;
+$ig-end: #515bd4;
+
+/* Typography */
+html, body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: 'Inter', 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #fafafa;
+  color: #111;
+}
+
+/* App gradient header helper */
+.ig-gradient {
+  background: linear-gradient(45deg, $ig-start, $ig-mid1, $ig-mid2, $ig-mid3, $ig-end);
+}
+
+/* Centered feed container */
+.feed-shell {
+  max-width: 975px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+/* Card elevation tweaks */
+.elev-1 { box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+.elev-2 { box-shadow: 0 4px 12px rgba(0,0,0,.12); }
+
+/* Buttons */
+.btn-primary {
+  background: #0095f6;
+  color: #fff;
+  border-radius: 8px;
+}
+.btn-primary:hover { background: #007bd1; }
+
+/* Inputs */
+.field-outline .mat-mdc-text-field-wrapper {
+  border-radius: 10px !important;
+}
+
+/* Story ring */
+.story-ring {
+  padding: 3px;
+  border-radius: 50%;
+  background: conic-gradient(from 180deg, $ig-start, $ig-mid2, $ig-end, $ig-start);
+}
+
+/* Utility */
+.muted { color: #8e8e8e; }
+.spacer { flex: 1 1 auto; }
+/* You can add global styles to this file, and also import other style files */

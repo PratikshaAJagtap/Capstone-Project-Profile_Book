@@ -1,0 +1,95 @@
+<div class="create-post-container">
+  <!-- Header -->
+  <mat-toolbar color="primary" class="header-toolbar">
+    <button mat-icon-button (click)="goBack()">
+      <!-- <mat-icon>arrow_back</mat-icon> -->
+    </button>
+    <span class="header-title">Create Post</span>
+    <span class="spacer"></span>
+    <button 
+      mat-raised-button 
+      color="accent" 
+      (click)="createPost()"
+      [disabled]="isLoading || (!content.trim() && !selectedFile)">
+      <mat-icon *ngIf="!isLoading">send</mat-icon>
+      <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+      {{ isLoading ? 'Posting...' : 'Post' }}
+    </button>
+  </mat-toolbar>
+
+  <!-- Main Content -->
+  <div class="content-container">
+    <mat-card class="create-post-card">
+      <mat-card-content>
+        <!-- User Info -->
+        <div class="user-info">
+          <img 
+            [src]="currentUser?.profileImage || 'assets/default-avatar.png'" 
+            alt="Profile" 
+            class="user-avatar">
+          <div class="user-details">
+            <h3>{{ currentUser?.username }}</h3>
+            <p>What's on your mind?</p>
+          </div>
+        </div>
+
+        <!-- Post Content -->
+        <mat-form-field appearance="outline" class="content-field">
+          <mat-label>Share your thoughts...</mat-label>
+          <textarea 
+            matInput 
+            [(ngModel)]="content" 
+            placeholder="What's happening?"
+            rows="6"
+            maxlength="500">
+          </textarea>
+          <mat-hint align="end">{{ content.length }}/500</mat-hint>
+        </mat-form-field>
+
+        <!-- Image Preview -->
+        <div class="image-preview" *ngIf="imagePreview">
+          <div class="image-container">
+            <img [src]="imagePreview" alt="Preview" class="preview-image">
+            <button mat-icon-button class="remove-image" (click)="removeImage()">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <input 
+            type="file" 
+            id="image-upload" 
+            accept="image/*" 
+            (change)="onFileSelected($event)"
+            style="display: none;">
+          <label for="image-upload">
+            <button mat-stroked-button type="button" class="upload-button">
+              <mat-icon>image</mat-icon>
+              <span>Add Photo</span>
+            </button>
+          </label>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Tips Card -->
+    <mat-card class="tips-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>lightbulb</mat-icon>
+          Posting Tips
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <ul class="tips-list">
+          <li>Share meaningful content with your friends</li>
+          <li>Be respectful and kind in your posts</li>
+          <li>Posts are reviewed before being published</li>
+          <li>You can add photos to make your posts more engaging</li>
+        </ul>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

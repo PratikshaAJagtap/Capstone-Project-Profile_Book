@@ -1,0 +1,153 @@
+<div class="profile-container">
+  <!-- Header -->
+  <mat-toolbar color="primary" class="header-toolbar">
+    <button mat-icon-button (click)="goBack()">
+      <!-- <mat-icon>arrow_back</mat-icon> -->
+    </button>
+    <span class="header-title">Profile</span>
+    <span class="spacer"></span>
+    <button 
+      mat-icon-button 
+      (click)="isEditing ? saveProfile() : startEditing()"
+      [disabled]="isLoading">
+      <!-- <mat-icon *ngIf="!isEditing">edit</mat-icon> -->
+      <!-- <mat-icon *ngIf="isEditing && !isLoading">save</mat-icon> -->
+      <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+    </button>
+  </mat-toolbar>
+
+  <div class="profile-content">
+    <!-- Profile Header -->
+    <mat-card class="profile-header-card">
+      <mat-card-content>
+        <div class="profile-header">
+          <div class="profile-image-section">
+            <img 
+              [src]="(imagePreview || currentUser?.profileImage) || 'assets/default-avatar.png'" 
+              alt="Profile" 
+              class="profile-image">
+            <input 
+              *ngIf="isEditing"
+              type="file" 
+              id="profile-image-upload" 
+              accept="image/*" 
+              (change)="onImageSelected($event)"
+              style="display: none;">
+            <label *ngIf="isEditing" for="profile-image-upload">
+              <button mat-fab color="primary" class="image-upload-button">
+                <!-- <mat-icon>camera_alt</mat-icon> -->
+              </button>
+            </label>
+          </div>
+          
+          <div class="profile-info">
+            <div *ngIf="!isEditing" class="profile-details">
+              <h1>{{ currentUser?.username }}</h1>
+              <p class="user-role">{{ currentUser?.role }}</p>
+              <div class="stats">
+                <div class="stat">
+                  <span class="stat-number">{{ userPosts.length }}</span>
+                  <span class="stat-label">Posts</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-number">{{ getApprovedPostsCount() }}</span>
+                  <span class="stat-label">Published</span>
+                </div>
+              </div>
+            </div>
+            
+            <div *ngIf="isEditing" class="edit-form">
+              <mat-form-field appearance="outline" class="username-field">
+                <mat-label>Username</mat-label>
+                <input matInput [(ngModel)]="editForm.username" placeholder="Enter username">
+              </mat-form-field>
+              
+              <div class="edit-actions">
+                <button mat-button (click)="cancelEditing()">
+                  Cancel
+                </button>
+                <button 
+                  mat-raised-button 
+                  color="primary" 
+                  (click)="saveProfile()"
+                  [disabled]="isLoading">
+                  <!-- <mat-icon *ngIf="!isLoading">save</mat-icon> -->
+                  <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Tabs -->
+    <mat-card class="tabs-card">
+      <mat-tab-group [(selectedIndex)]="selectedTab">
+        <mat-tab label="Posts">
+          <div class="posts-tab">
+            <!-- Posts Grid -->
+            <div class="posts-grid" *ngIf="!isLoading && userPosts.length > 0">
+              <mat-card 
+                *ngFor="let post of userPosts" 
+                class="post-card">
+                <img 
+                  *ngIf="post.postImage" 
+                  [src]="post.postImage" 
+                  alt="Post image" 
+                  class="post-image">
+                <mat-card-content>
+                  <p class="post-content">{{ post.content }}</p>
+                  <div class="post-meta">
+                    <mat-chip [color]="getPostStatusColor(post.status)">
+                      {{ post.status }}
+                    </mat-chip>
+                    <span class="post-date">{{ formatDate(post.timestamp || '') }}</span>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+
+            <!-- Loading State -->
+            <div class="loading-container" *ngIf="isLoading">
+              <mat-spinner></mat-spinner>
+              <p>Loading posts...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state" *ngIf="!isLoading && userPosts.length === 0">
+              <!-- <mat-icon class="empty-icon">post_add</mat-icon> -->
+              <h3>No posts yet</h3>
+              <p>Share your first post with the community!</p>
+              <button mat-raised-button color="primary" routerLink="/create-post">
+                Create Post
+              </button>
+            </div>
+          </div>
+        </mat-tab>
+
+        <mat-tab label="Activity">
+          <div class="activity-tab">
+            <div class="activity-item">
+              <!-- <mat-icon>post_add</mat-icon> -->
+              <div class="activity-content">
+                <h4>Joined ProfileBook</h4>
+                <p>Welcome to the community!</p>
+              </div>
+            </div>
+            
+            <div class="activity-item" *ngFor="let post of userPosts.slice(0, 5)">
+              <!-- <mat-icon>edit</mat-icon> -->
+              <div class="activity-content">
+                <h4>Created a post</h4>
+                <p>{{ post.content.substring(0, 50) }}{{ post.content.length > 50 ? '...' : '' }}</p>
+                <span class="activity-date">{{ formatDate(post.timestamp || '') }}</span>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-card>
+  </div>
+</div>

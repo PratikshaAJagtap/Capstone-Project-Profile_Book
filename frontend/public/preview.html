@@ -1,0 +1,603 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MyProfileBook Preview</title>
+    <link rel="icon" href="favicon.ico">
+    <style>
+      :root {
+        --space-0: 0; --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px;
+        --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px;
+        --shadow-1: 0 1px 3px rgba(0,0,0,.08); --shadow-2: 0 4px 12px rgba(0,0,0,.12);
+        --brand-1: #f58529; --brand-2: #f77737; --brand-3: #dd2a7b; --brand-4: #8134af; --brand-5: #515bd4;
+      }
+      html, body { height: 100%; }
+      html { scroll-behavior: smooth; }
+      body { margin: 0; font-family: Inter, Roboto, Segoe UI, Tahoma, Geneva, Verdana, sans-serif; background: #fafafa; color: #111; }
+      .container { max-width: 975px; margin: 0 auto; padding: var(--space-6) var(--space-4); }
+      .section { margin: var(--space-8) auto; }
+      .section h2 { margin: 0 0 var(--space-4) 0; font-size: 1.4rem; }
+      .card { background: #fff; border-radius: var(--radius-lg); box-shadow: var(--shadow-1); }
+      .row { display: flex; align-items: center; gap: var(--space-3); }
+      .stack { display: flex; flex-direction: column; gap: var(--space-4); }
+      .toolbar { position: sticky; top: 0; z-index: 1; color: #fff; padding: var(--space-4) var(--space-5); box-shadow: 0 2px 4px rgba(0,0,0,.1);
+        background: linear-gradient(45deg, var(--brand-1), var(--brand-2), var(--brand-3), var(--brand-4), var(--brand-5)); }
+      .toolbar .title { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+      .spacer { flex: 1 1 auto; }
+      .avatar { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; }
+      .muted { color: #8e8e8e; }
+      .btn { display: inline-flex; align-items: center; justify-content: center; height: 44px; border-radius: var(--radius-sm); padding: 0 var(--space-4); font-weight: 600; border: none; cursor: pointer; }
+      .btn-primary { background: #0095f6; color: #fff; }
+      .btn-accent { background: #7c3aed; color: #fff; }
+      .pill { padding: 6px 10px; border-radius: 999px; background: #f0f0f0; font-size: 12px; }
+      .empty { text-align: center; color: #666; padding: var(--space-10) var(--space-4); }
+
+      /* Screens */
+      .screen { border: 1px solid #eee; background: #fdfdfd; border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-2); }
+      .screen-body { padding: var(--space-5); }
+
+      /* Dashboard */
+      .feed { max-width: 600px; margin: 0 auto; }
+      .post-card { border-radius: var(--radius-lg); box-shadow: var(--shadow-2); padding: var(--space-4); }
+      .post-image { width: 100%; max-height: 380px; object-fit: cover; border-radius: var(--radius-sm); margin-top: var(--space-3); }
+      .post-actions { display: flex; align-items: center; gap: var(--space-3); border-top: 1px solid #f0f0f0; padding-top: var(--space-3); }
+
+      /* Login/Register */
+      .auth { max-width: 450px; margin: 0 auto; }
+      .field { display: flex; flex-direction: column; gap: 6px; }
+      .input { height: 44px; border-radius: var(--radius-sm); border: 1px solid #e0e0e0; padding: 0 12px; }
+      .auth-bg { background: linear-gradient(135deg, var(--brand-1), var(--brand-3), var(--brand-5)); padding: var(--space-8) var(--space-4); border-radius: var(--radius-lg); }
+      .tabs { display: flex; gap: 8px; background: #ffffff22; padding: 6px; border-radius: 999px; align-self: flex-start; }
+      .tab { padding: 8px 14px; border-radius: 999px; background: #ffffff55; color: #fff; font-weight: 600; font-size: 14px; text-decoration: none; }
+      .tab.active { background: #fff; color: #333; }
+      .link { color: #0095f6; text-decoration: none; font-weight: 600; }
+
+      /* Profile */
+      .profile-head { display: flex; align-items: center; gap: var(--space-6); }
+      .profile-stats { display: flex; gap: var(--space-8); }
+      .stat { text-align: center; }
+
+      /* Messages */
+      .messages { display: grid; grid-template-columns: 320px 1fr; min-height: 460px; border: 1px solid #eee; border-radius: var(--radius-lg); overflow: hidden; }
+      .conv { border-right: 1px solid #eee; background: #fff; }
+      .conv-item { display: grid; grid-template-columns: 52px 1fr auto; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid #f5f5f5; }
+      .bubble { max-width: 70%; padding: 12px 16px; border-radius: 18px; margin: 6px 0; }
+      .bubble.me { background: #1976d2; color: #fff; margin-left: auto; border-bottom-right-radius: 4px; }
+      .bubble.other { background: #f1f1f1; color: #333; margin-right: auto; border-bottom-left-radius: 4px; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>MyProfileBook — Preview</h1>
+    
+      <div class="section" id="dashboard">
+        <h2>Dashboard</h2>
+        <div class="screen">
+          <div class="toolbar row">
+            <div class="title">👥 ProfileBook</div>
+            <span class="spacer"></span>
+            <div>🙂</div>
+          </div>
+          <div class="screen-body">
+            <div class="feed stack">
+              <div class="card row" style="padding:16px;">
+                <img src="../src/assets/default-avatar.png" class="avatar" alt="avatar">
+                <button class="btn" style="flex:1; background:#f5f5f5; border:1px solid #e0e0e0; text-align:left;">Search here</button>
+              </div>
+              <!-- Post 1 -->
+              <div class="post-card card stack">
+                <div class="row">
+                  <img src="../src/assets/default-avatar.png" class="avatar" alt="avatar">
+                  <div>
+                    <div><strong>john_doe</strong></div>
+                    <div class="muted">2h ago</div>
+                  </div>
+                  <span class="spacer"></span>
+                  ⋮
+                </div>
+                <div>Lovely day at the beach! 🌊</div>
+                <img class="post-image" src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1000" alt="post">
+                <div class="post-actions">
+                  <span>👍 Like</span>
+                  <span>↗ Share</span>
+                  <span>   Comment</span>
+                  <span class="spacer"></span>
+                  <!-- <span class="pill">APPROVED</span> -->
+                </div>
+              </div>
+
+              <!-- Post 2 -->
+              <div class="post-card card stack">
+                <div class="row">
+                  <img src="../src/assets/default-avatar.png" class="avatar" alt="avatar">
+                  <div>
+                    <div><strong>jane</strong></div>
+                    <div class="muted">5h ago</div>
+                  </div>
+                  <span class="spacer"></span>
+                  ⋮
+                </div>
+                <div>Fresh brew and a good book ☕📖</div>
+                <img class="post-image" src="https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=1000" alt="post">
+                <div class="post-actions">
+                  <span>👍 Like</span>
+                  <span>↗ Share</span>
+                   <span>   Comment</span>
+                  <span class="spacer"></span>
+                  <!-- <span class="pill">PENDING</span> -->
+                </div>
+              </div>
+
+              <!-- Post 3 -->
+              <div class="post-card card stack">
+                <div class="row">
+                  <img src="../src/assets/default-avatar.png" class="avatar" alt="avatar">
+                  <div>
+                    <div><strong>mike</strong></div>
+                    <div class="muted">Yesterday</div>
+                  </div>
+                  <span class="spacer"></span>
+                  ⋮
+                </div>
+                <div>Sunset vibes 🌅</div>
+                <img class="post-image" src="https://images.unsplash.com/photo-1499346030926-9a72daac6c63?w=1000" alt="post">
+                <div class="post-actions">
+                  <span>👍 Like</span>
+                  <span>↗ Share</span>
+                   <span>   Comment</span>
+                  <span class="spacer"></span>
+                  <!-- <span class="pill">APPROVED</span> -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section" id="login">
+        <h2>Login</h2>
+        <div class="screen">
+          <div class="screen-body">
+            <div class="auth-bg">
+              <div class="auth card" style="padding:24px;">
+                <div class="tabs">
+                  <span class="tab active">User account</span>
+                  <span class="tab">Admin account</span>
+                </div>
+                <h3 style="margin-top:12px;">👥 ProfileBook</h3>
+                <p class="muted">Connect with friends and share your moments</p>
+                <div class="stack" style="margin-top:16px;">
+                  <div class="field">
+                    <label>Username</label>
+                    <input class="input" placeholder="Enter your username" />
+                  </div>
+                  <div class="field">
+                    <label>Password</label>
+                    <input class="input" type="password" placeholder="Enter your password" />
+                  </div>
+                  <div class="row" style="gap:12px;">
+                    <a class="btn btn-primary" href="#dashboard">Sign In</a>
+                    <a class="btn btn-accent" href="#register">Create new account</a>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section" id="register">
+        <h2>Register</h2>
+        <div class="screen">
+          <div class="screen-body">
+            <div class="auth-bg">
+              <div class="auth card" style="padding:24px;">
+                <h3>Join ProfileBook</h3>
+                <p class="muted">Create your account to start connecting</p>
+                <div class="stack" style="margin-top:16px;">
+                  <div class="field"><label>Username</label><input class="input" placeholder="Choose a username" /></div>
+                  <div class="field"><label>Password</label><input class="input" type="password" placeholder="Create a password" /></div>
+                  <div class="field"><label>Confirm Password</label><input class="input" type="password" placeholder="Confirm your password" /></div>
+                  <div class="row" style="gap:12px;">
+                    <a class="btn btn-primary" href="#login">Create Account</a>
+                    <a class="btn" style="background:#fff;border:1px solid #e0e0e0;" href="#login">Already have an account?</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Profile</h2>
+        <div class="screen">
+          <div class="toolbar row"><div class="title">Profile</div><span class="spacer"></span>✏️</div>
+          <div class="screen-body stack">
+            <div class="card" style="padding:20px;">
+              <div class="profile-head">
+                <img src="../src/assets/default-avatar.png" class="avatar" style="width:120px;height:120px;border:4px solid #e0e0e0;" alt="avatar">
+                <div>
+                  <h2 style="margin:0 0 8px 0;">john_doe</h2>
+                  <p class="muted" style="margin:0 0 16px 0;">user</p>
+                  <div class="profile-stats">
+                    <div class="stat"><div style="font-weight:600;color:#1976d2;">12</div><div class="muted" style="text-transform:uppercase;font-size:12px;">Posts</div></div>
+                    <div class="stat"><div style="font-weight:600;color:#1976d2;">9</div><div class="muted" style="text-transform:uppercase;font-size:12px;">Published</div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card" style="padding:20px;">
+              <h3 style="margin-top:0;">Posts</h3>
+              <div class="stack">
+                <div class="card" style="overflow:hidden;">
+                  <img src="https://images.unsplash.com/photo-1549880338-65ddcdfd017b?w=1000" style="width:100%;height:200px;object-fit:cover;" alt="post">
+                  <div style="padding:12px 16px;">
+                    <p class="muted" style="margin:0 0 8px 0;">Snowy mountains are breathtaking.</p>
+                    <div class="row" style="justify-content:space-between;">
+                      <span class="pill">APPROVED</span>
+                      <span class="muted">Jul 21, 2025</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Messages</h2>
+        <div class="screen">
+          <div class="toolbar row"><div class="title">Messages</div><span class="spacer"></span>🔍</div>
+          <div class="screen-body">
+            <div class="messages">
+              <div class="conv">
+                <div class="conv-item">
+                  <img src="../src/assets/default-avatar.png" class="avatar" style="width:50px;height:50px;" alt="avatar">
+                  <div>
+                    <div><strong>jane</strong></div>
+                    <div class="muted" style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Hey! Are we meeting today?</div>
+                  </div>
+                  <div class="muted" style="font-size:12px;">11:20</div>
+                </div>
+                <div class="conv-item">
+                  <img src="../src/assets/default-avatar.png" class="avatar" style="width:50px;height:50px;" alt="avatar">
+                  <div>
+                    <div><strong>mike</strong></div>
+                    <div class="muted" style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Check this out 🔥</div>
+                  </div>
+                  <div class="muted" style="font-size:12px;">09:05</div>
+                </div>
+                <div class="conv-item">
+                  <img src="../src/assets/default-avatar.png" class="avatar" style="width:50px;height:50px;" alt="avatar">
+                  <div>
+                    <div><strong>alex</strong></div>
+                    <div class="muted" style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Sent you the files.</div>
+                  </div>
+                  <div class="muted" style="font-size:12px;">Yesterday</div>
+                </div>
+                <div class="conv-item">
+                  <img src="../src/assets/default-avatar.png" class="avatar" style="width:50px;height:50px;" alt="avatar">
+                  <div>
+                    <div><strong>emma</strong></div>
+                    <div class="muted" style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Let’s catch up!</div>
+                  </div>
+                  <div class="muted" style="font-size:12px;">Mon</div>
+                </div>
+                <div class="conv-item">
+                  <img src="../src/assets/default-avatar.png" class="avatar" style="width:50px;height:50px;" alt="avatar">
+                  <div>
+                    <div><strong>lisa</strong></div>
+                    <div class="muted" style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">New post is up 😊</div>
+                  </div>
+                  <div class="muted" style="font-size:12px;">Sun</div>
+                </div>
+              </div>
+              <div style="display:flex;flex-direction:column;padding:20px;gap:8px;background:#fff;">
+                <div class="bubble other">Hi there!</div>
+                <div class="bubble me">Hello! 👋</div>
+                <div class="bubble other">Can you review my post?</div>
+                <div class="bubble me">Sure, send it over.</div>
+                <div class="bubble other">Shared the link just now.</div>
+                <div class="bubble me">Got it. Looks great!</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+       <!-- Admin Dashboard Section -->
+      <div class="section" id="admin-dashboard">
+        <h2>Admin Dashboard</h2>
+        <div class="screen">
+          <div class="toolbar row">
+            <div class="title">🛡️ Admin Dashboard</div>
+            <span class="spacer"></span>
+            <div>🔔 <span style="background:#ff4444;color:#fff;padding:2px 6px;border-radius:10px;font-size:10px;">3</span></div>
+          </div>
+          <div class="screen-body">
+            <div class="row" style="gap:20px;margin-bottom:20px;">
+              <div class="card" style="padding:20px;flex:1;text-align:center;">
+                <h3 style="margin:0 0 8px 0;color:#1976d2;">1,234</h3>
+                <p class="muted" style="margin:0;">Total Users</p>
+              </div>
+              <div class="card" style="padding:20px;flex:1;text-align:center;">
+                <h3 style="margin:0 0 8px 0;color:#4caf50;">89</h3>
+                <p class="muted" style="margin:0;">Posts Today</p>
+              </div>
+              <div class="card" style="padding:20px;flex:1;text-align:center;">
+                <h3 style="margin:0 0 8px 0;color:#ff9800;">12</h3>
+                <p class="muted" style="margin:0;">Pending Reviews</p>
+              </div>
+              <div class="card" style="padding:20px;flex:1;text-align:center;">
+                <h3 style="margin:0 0 8px 0;color:#f44336;">3</h3>
+                <p class="muted" style="margin:0;">Reports</p>
+              </div>
+            </div>
+
+            <!-- User Management -->
+            <div class="card" style="padding:20px;margin-bottom:20px;">
+              <h3 style="margin-top:0;">User Management</h3>
+              <div class="stack">
+                <div class="row" style="padding:12px;background:#f8f9fa;border-radius:8px;border:1px solid #e9ecef;">
+                  <img src="../src/assets/default-avatar.png" class="avatar" style="width:40px;height:40px;" alt="avatar">
+                  <div style="flex:1;">
+                    <div><strong>john_doe</strong> <span class="pill" style="background:#e3f2fd;color:#1976d2;">Active</span></div>
+                    <div class="muted">john@example.com • Joined 2 days ago</div>
+                  </div>
+                  <div style="display:flex;gap:8px;">
+                    <button class="btn" style="background:#4caf50;color:#fff;padding:6px 12px;height:auto;">Approve</button>
+                    <button class="btn" style="background:#f44336;color:#fff;padding:6px 12px;height:auto;">Suspend</button>
+                    <button class="btn" style="background:#ff9800;color:#fff;padding:6px 12px;height:auto;">Edit</button>
+                  </div>
+                </div>
+                <div class="row" style="padding:12px;background:#f8f9fa;border-radius:8px;border:1px solid #e9ecef;">
+                  <img src="../src/assets/default-avatar.png" class="avatar" style="width:40px;height:40px;" alt="avatar">
+                  <div style="flex:1;">
+                    <div><strong>jane_smith</strong> <span class="pill" style="background:#fff3e0;color:#f57c00;">Pending</span></div>
+                    <div class="muted">jane@example.com • Joined 1 day ago</div>
+                  </div>
+                  <div style="display:flex;gap:8px;">
+                    <button class="btn" style="background:#4caf50;color:#fff;padding:6px 12px;height:auto;">Approve</button>
+                    <button class="btn" style="background:#f44336;color:#fff;padding:6px 12px;height:auto;">Reject</button>
+                    <button class="btn" style="background:#ff9800;color:#fff;padding:6px 12px;height:auto;">Edit</button>
+                  </div>
+                </div>
+                <div class="row" style="padding:12px;background:#f8f9fa;border-radius:8px;border:1px solid #e9ecef;">
+                  <img src="../src/assets/default-avatar.png" class="avatar" style="width:40px;height:40px;" alt="avatar">
+                  <div style="flex:1;">
+                    <div><strong>mike_wilson</strong> <span class="pill" style="background:#ffebee;color:#d32f2f;">Suspended</span></div>
+                    <div class="muted">mike@example.com • Joined 1 week ago</div>
+                  </div>
+                  <div style="display:flex;gap:8px;">
+                    <button class="btn" style="background:#4caf50;color:#fff;padding:6px 12px;height:auto;">Reactivate</button>
+                    <button class="btn" style="background:#f44336;color:#fff;padding:6px 12px;height:auto;">Delete</button>
+                    <button class="btn" style="background:#ff9800;color:#fff;padding:6px 12px;height:auto;">Edit</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Post Moderation -->
+            <div class="card" style="padding:20px;margin-bottom:20px;">
+              <h3 style="margin-top:0;">Post Moderation</h3>
+              <div class="stack">
+                <div class="card" style="padding:16px;border:1px solid #ffeb3b;background:#fffde7;">
+                  <div class="row">
+                    <img src="../src/assets/default-avatar.png" class="avatar" style="width:40px;height:40px;" alt="avatar">
+                    <div style="flex:1;">
+                      <div><strong>alex_jones</strong> <span class="pill" style="background:#fff3e0;color:#f57c00;">Under Review</span></div>
+                      <div class="muted">Posted 1 hour ago</div>
+                    </div>
+                    <div style="display:flex;gap:8px;">
+                      <button class="btn" style="background:#4caf50;color:#fff;padding:6px 12px;height:auto;">Approve</button>
+                      <button class="btn" style="background:#f44336;color:#fff;padding:6px 12px;height:auto;">Reject</button>
+                    </div>
+                  </div>
+                  <p style="margin:8px 0;">Check out this amazing sunset! 🌅</p>
+                  <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400" style="width:100%;height:200px;object-fit:cover;border-radius:8px;" alt="post">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notifications Section -->
+      <div class="section" id="notifications">
+        <h2>Notifications</h2>
+        <div class="screen">
+          <div class="toolbar row">
+            <div class="title">🔔 Notifications</div>
+            <span class="spacer"></span>
+            <button class="btn" style="background:#4caf50;color:#fff;padding:6px 12px;height:auto;">Mark All Read</button>
+          </div>
+          <div class="screen-body">
+            <div class="stack">
+              <!-- Follow Notifications -->
+              <div class="card" style="padding:16px;border-left:4px solid #4caf50;">
+                <div class="row">
+                  <img src="../src/assets/default-avatar.png" class="avatar" style="width:40px;height:40px;" alt="avatar">
+                  <div style="flex:1;">
+                    <div><strong>sarah_wilson</strong> started following you</div>
+                    <div class="muted">2 minutes ago</div>
+                  </div>
+                  <div style="display:flex;gap:8px;">
+                    <button class="btn" style="background:#4caf50;color:#fff;padding:6px 12px;height:auto;">Follow Back</button>
+                    <button class="btn" style="background:#f44336;color:#fff;padding:6px 12px;height:auto;">Remove</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card" style="padding:16px;border-left:4px solid #4caf50;">
+                <div class="row">
+                  <img src="../src/assets/default-avatar.png" class="avatar" style="width:40px;height:40px;" alt="avatar">
+                  <div style="flex:1;">
+                    <div><strong>mike_chen</strong> started following you</div>
+                    <div class="muted">1 hour ago</div>
+                  </div>
+                  <div style="display:flex;gap:8px;">
+                    <button class="btn" style="background:#4caf50;color:#fff;padding:6px 12px;height:auto;">Follow Back</button>
+                    <button class="btn" style="background:#f44336;color:#fff;padding:6px 12px;height:auto;">Remove</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Post Notifications -->
+              <div class="card" style="padding:16px;border-left:4px solid #2196f3;">
+                <div class="row">
+                  <img src="../src/assets/default-avatar.png" class="avatar" style="width:40px;height:40px;" alt="avatar">
+                  <div style="flex:1;">
+                    <div><strong>jane_doe</strong> liked your post "Amazing sunset today!"</div>
+                    <div class="muted">3 hours ago</div>
+                  </div>
+                  <button class="btn" style="background:#f44336;color:#fff;padding:6px 12px;height:auto;">Remove</button>
+                </div>
+              </div>
+
+              <div class="card" style="padding:16px;border-left:4px solid #2196f3;">
+                <div class="row">
+                  <img src="../src/assets/default-avatar.png" class="avatar" style="width:40px;height:40px;" alt="avatar">
+                  <div style="flex:1;">
+                    <div><strong>alex_smith</strong> commented on your post</div>
+                    <div class="muted">5 hours ago</div>
+                  </div>
+                  <button class="btn" style="background:#f44336;color:#fff;padding:6px 12px;height:auto;">Remove</button>
+                </div>
+              </div>
+
+              <!-- System Notifications -->
+              <div class="card" style="padding:16px;border-left:4px solid #ff9800;">
+                <div class="row">
+                  <div style="width:40px;height:40px;background:#ff9800;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:bold;">!</div>
+                  <div style="flex:1;">
+                    <div><strong>System</strong> Your post has been approved and published</div>
+                    <div class="muted">1 day ago</div>
+                  </div>
+                  <button class="btn" style="background:#f44336;color:#fff;padding:6px 12px;height:auto;">Remove</button>
+                </div>
+              </div>
+
+              <div class="card" style="padding:16px;border-left:4px solid #ff9800;">
+                <div class="row">
+                  <div style="width:40px;height:40px;background:#ff9800;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:bold;">!</div>
+                  <div style="flex:1;">
+                    <div><strong>System</strong> Welcome to ProfileBook! Complete your profile setup</div>
+                    <div class="muted">2 days ago</div>
+                  </div>
+                  <button class="btn" style="background:#4caf50;color:#fff;padding:6px 12px;height:auto;">Complete</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Followers Management Section -->
+      <div class="section" id="followers">
+        <h2>Followers Management</h2>
+        <div class="screen">
+          <div class="toolbar row">
+            <div class="title">👥 Followers & Following</div>
+            <span class="spacer"></span>
+            <div style="display:flex;gap:12px;">
+              <button class="btn" style="background:#4caf50;color:#fff;">Followers (234)</button>
+              <button class="btn" style="background:#2196f3;color:#fff;">Following (189)</button>
+            </div>
+          </div>
+          <div class="screen-body">
+            <div class="row" style="gap:20px;">
+              <!-- Followers List -->
+              <div class="card" style="padding:20px;flex:1;">
+                <h3 style="margin-top:0;">Followers</h3>
+                <div class="stack">
+                  <div class="row" style="padding:12px;background:#f8f9fa;border-radius:8px;border:1px solid #e9ecef;">
+                    <img src="../src/assets/default-avatar.png" class="avatar" style="width:40px;height:40px;" alt="avatar">
+                    <div style="flex:1;">
+                      <div><strong>sarah_wilson</strong></div>
+                      <div class="muted">sarah@example.com</div>
+                    </div>
+                    <div style="display:flex;gap:8px;">
+                      <button class="btn" style="background:#4caf50;color:#fff;padding:6px 12px;height:auto;">Follow Back</button>
+                      <button class="btn" style="background:#f44336;color:#fff;padding:6px 12px;height:auto;">Remove</button>
+                    </div>
+                  </div>
+                  <div class="row" style="padding:12px;background:#f8f9fa;border-radius:8px;border:1px solid #e9ecef;">
+                    <img src="../src/assets/default-avatar.png" class="avatar" style="width:40px;height:40px;" alt="avatar">
+                    <div style="flex:1;">
+                      <div><strong>mike_chen</strong></div>
+                      <div class="muted">mike@example.com</div>
+                    </div>
+                    <div style="display:flex;gap:8px;">
+                      <button class="btn" style="background:#4caf50;color:#fff;padding:6px 12px;height:auto;">Follow Back</button>
+                      <button class="btn" style="background:#f44336;color:#fff;padding:6px 12px;height:auto;">Remove</button>
+                    </div>
+                  </div>
+                  <div class="row" style="padding:12px;background:#f8f9fa;border-radius:8px;border:1px solid #e9ecef;">
+                    <img src="../src/assets/default-avatar.png" class="avatar" style="width:40px;height:40px;" alt="avatar">
+                    <div style="flex:1;">
+                      <div><strong>jane_doe</strong></div>
+                      <div class="muted">jane@example.com</div>
+                    </div>
+                    <div style="display:flex;gap:8px;">
+                      <button class="btn" style="background:#4caf50;color:#fff;padding:6px 12px;height:auto;">Follow Back</button>
+                      <button class="btn" style="background:#f44336;color:#fff;padding:6px 12px;height:auto;">Remove</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Following List -->
+              <div class="card" style="padding:20px;flex:1;">
+                <h3 style="margin-top:0;">Following</h3>
+                <div class="stack">
+                  <div class="row" style="padding:12px;background:#f8f9fa;border-radius:8px;border:1px solid #e9ecef;">
+                    <img src="../src/assets/default-avatar.png" class="avatar" style="width:40px;height:40px;" alt="avatar">
+                    <div style="flex:1;">
+                      <div><strong>alex_smith</strong></div>
+                      <div class="muted">alex@example.com</div>
+                    </div>
+                    <div style="display:flex;gap:8px;">
+                      <button class="btn" style="background:#f44336;color:#fff;padding:6px 12px;height:auto;">Unfollow</button>
+                      <button class="btn" style="background:#ff9800;color:#fff;padding:6px 12px;height:auto;">Block</button>
+                    </div>
+                  </div>
+                  <div class="row" style="padding:12px;background:#f8f9fa;border-radius:8px;border:1px solid #e9ecef;">
+                    <img src="../src/assets/default-avatar.png" class="avatar" style="width:40px;height:40px;" alt="avatar">
+                    <div style="flex:1;">
+                      <div><strong>emma_jones</strong></div>
+                      <div class="muted">emma@example.com</div>
+                    </div>
+                    <div style="display:flex;gap:8px;">
+                      <button class="btn" style="background:#f44336;color:#fff;padding:6px 12px;height:auto;">Unfollow</button>
+                      <button class="btn" style="background:#ff9800;color:#fff;padding:6px 12px;height:auto;">Block</button>
+                    </div>
+                  </div>
+                  <div class="row" style="padding:12px;background:#f8f9fa;border-radius:8px;border:1px solid #e9ecef;">
+                    <img src="../src/assets/default-avatar.png" class="avatar" style="width:40px;height:40px;" alt="avatar">
+                    <div style="flex:1;">
+                      <div><strong>david_brown</strong></div>
+                      <div class="muted">david@example.com</div>
+                    </div>
+                    <div style="display:flex;gap:8px;">
+                      <button class="btn" style="background:#f44336;color:#fff;padding:6px 12px;height:auto;">Unfollow</button>
+                      <button class="btn" style="background:#ff9800;color:#fff;padding:6px 12px;height:auto;">Block</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p class="muted" style="text-align:center; margin-top:40px;"> preview only. For Structure understanding</p>
+    </div>
+    </div>
+  </body>
+  </html>
+
+

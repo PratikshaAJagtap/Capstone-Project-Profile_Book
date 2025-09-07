@@ -1,0 +1,133 @@
+<div class="money-transfer-container">
+  <!-- Header -->
+  <mat-toolbar color="primary" class="header-toolbar">
+    <button mat-icon-button routerLink="/dashboard">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <span class="header-title">
+      <mat-icon>account_balance_wallet</mat-icon>
+      Money Transfer
+    </span>
+    <span class="spacer"></span>
+    <button mat-icon-button>
+      <mat-icon>history</mat-icon>
+    </button>
+  </mat-toolbar>
+
+  <div class="transfer-content">
+    <!-- Transfer Form -->
+    <mat-card class="transfer-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>send</mat-icon>
+          Send Money
+        </mat-card-title>
+        <mat-card-subtitle>Transfer money to other users</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <form class="transfer-form">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Send to</mat-label>
+            <mat-select [(ngModel)]="transferForm.receiverId" name="receiverId">
+              <mat-option *ngFor="let user of users" [value]="user.userId">
+                <div class="user-option">
+                  <img 
+                    [src]="user.profileImage || 'assets/default-avatar.png'" 
+                    alt="Profile" 
+                    class="user-avatar">
+                  <span>{{ user.username }}</span>
+                </div>
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Amount ($)</mat-label>
+            <input 
+              matInput 
+              type="number" 
+              [(ngModel)]="transferForm.amount" 
+              name="amount"
+              placeholder="Enter amount"
+              min="1">
+            <mat-icon matSuffix>attach_money</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Description (Optional)</mat-label>
+            <textarea 
+              matInput 
+              [(ngModel)]="transferForm.description" 
+              name="description"
+              placeholder="Add a note..."
+              rows="3">
+            </textarea>
+          </mat-form-field>
+
+          <button 
+            mat-raised-button 
+            color="primary" 
+            class="transfer-button full-width"
+            (click)="transferMoney()"
+            [disabled]="isTransferring || !transferForm.receiverId || !transferForm.amount">
+            <mat-icon *ngIf="!isTransferring">send</mat-icon>
+            <mat-spinner *ngIf="isTransferring" diameter="20"></mat-spinner>
+            {{ isTransferring ? 'Transferring...' : 'Send Money' }}
+          </button>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Transaction History -->
+    <mat-card class="history-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>history</mat-icon>
+          Recent Transactions
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="transactions-list" *ngIf="transactions.length > 0">
+          <div 
+            *ngFor="let transaction of transactions" 
+            class="transaction-item">
+            <div class="transaction-info">
+              <div class="transaction-header">
+                <span class="transaction-type">
+                  {{ transaction.senderId === currentUser.userId ? 'Sent to' : 'Received from' }}
+                </span>
+                <span class="transaction-amount" 
+                      [class.sent]="transaction.senderId === currentUser.userId"
+                      [class.received]="transaction.senderId !== currentUser.userId">
+                  {{ transaction.senderId === currentUser.userId ? '-' : '+' }}${{ transaction.amount }}
+                </span>
+              </div>
+              <div class="transaction-details">
+                <span class="transaction-user">
+                  {{ transaction.senderId === currentUser.userId ? 
+                     transaction.receiver?.username : 
+                     transaction.sender?.username }}
+                </span>
+                <span class="transaction-description">{{ transaction.description }}</span>
+              </div>
+              <div class="transaction-meta">
+                <span class="transaction-date">{{ formatDate(transaction.timestamp) }}</span>
+                <mat-chip [color]="getTransactionStatusColor(transaction.status)">
+                  {{ transaction.status }}
+                </mat-chip>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="empty-state" *ngIf="transactions.length === 0">
+          <mat-icon class="empty-icon">account_balance_wallet</mat-icon>
+          <h3>No transactions yet</h3>
+          <p>Your transaction history will appear here</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

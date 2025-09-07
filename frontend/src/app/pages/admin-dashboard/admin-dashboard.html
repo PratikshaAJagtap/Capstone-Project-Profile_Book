@@ -1,0 +1,261 @@
+<div class="admin-dashboard-container">
+  <!-- Header -->
+  <mat-toolbar color="primary" class="header-toolbar">
+    <!-- <mat-icon class="admin-icon">admin_panel_settings</mat-icon> -->
+    <span class="header-title">Admin Dashboard</span>
+    <span class="spacer"></span>
+    <button mat-icon-button [matMenuTriggerFor]="userMenu">
+      <mat-icon>account_circle</mat-icon>
+    </button>
+    
+    <mat-menu #userMenu="matMenu">
+      <button mat-menu-item (click)="logout()">
+        <!-- <mat-icon>logout</mat-icon> -->
+        <span>Logout</span>
+      </button>
+    </mat-menu>
+  </mat-toolbar>
+
+  <div class="admin-content">
+    <!-- Stats Cards -->
+    <div class="stats-container">
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-content">
+            <!-- <mat-icon class="stat-icon">people</mat-icon> -->
+            <div class="stat-info">
+              <h3>{{ users.length }}</h3>
+              <p>Total Users</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-content">
+            <!-- <mat-icon class="stat-icon">post_add</mat-icon> -->
+            <div class="stat-info">
+              <h3>{{ posts.length }}</h3>
+              <p>Total Posts</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-content">
+            <!-- <mat-icon class="stat-icon">pending</mat-icon> -->
+            <div class="stat-info">
+              <h3>{{ getPendingPostsCount() }}</h3>
+              <p>Pending Posts</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-content">
+            <!-- <mat-icon class="stat-icon">report</mat-icon> -->
+            <div class="stat-info">
+              <h3>{{ reports.length }}</h3>
+              <p>Reports</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Management Tabs -->
+    <mat-card class="management-card">
+      <mat-tab-group [(selectedIndex)]="selectedTab">
+        <!-- Posts Management -->
+        <mat-tab label="Posts">
+          <div class="tab-content">
+            <div class="table-container">
+              <table mat-table [dataSource]="posts" class="posts-table">
+                <ng-container matColumnDef="user">
+                  <th mat-header-cell *matHeaderCellDef>User</th>
+                  <td mat-cell *matCellDef="let post">
+                    <div class="user-cell">
+                      <img 
+                        [src]="post.user?.profileImage || 'assets/default-avatar.png'" 
+                        alt="Profile" 
+                        class="user-avatar">
+                      <span>{{ post.user?.username || 'Unknown' }}</span>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="content">
+                  <th mat-header-cell *matHeaderCellDef>Content</th>
+                  <td mat-cell *matCellDef="let post">
+                    <div class="content-cell">
+                      <p class="content-text">{{ post.content }}</p>
+                      <img 
+                        *ngIf="post.postImage" 
+                        [src]="post.postImage" 
+                        alt="Post image" 
+                        class="post-thumbnail">
+                    </div>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="status">
+                  <th mat-header-cell *matHeaderCellDef>Status</th>
+                  <td mat-cell *matCellDef="let post">
+                    <mat-chip [color]="getStatusColor(post.status)">
+                      {{ post.status }}
+                    </mat-chip>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="actions">
+                  <th mat-header-cell *matHeaderCellDef>Actions</th>
+                  <td mat-cell *matCellDef="let post">
+                    <div class="action-buttons">
+                      <button 
+                        *ngIf="post.status === 'Pending'"
+                        mat-icon-button 
+                        color="primary" 
+                        (click)="approvePost(post)"
+                        matTooltip="Approve">
+                        <mat-icon>check</mat-icon>
+                      </button>
+                      <button 
+                        *ngIf="post.status === 'Pending'"
+                        mat-icon-button 
+                        color="warn" 
+                        (click)="rejectPost(post)"
+                        matTooltip="Reject">
+                        <!-- <mat-icon>close</mat-icon> -->
+                      </button>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="postsColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: postsColumns;"></tr>
+              </table>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- Reports Management -->
+        <mat-tab label="Reports">
+          <div class="tab-content">
+            <div class="table-container">
+              <table mat-table [dataSource]="reports" class="reports-table">
+                <ng-container matColumnDef="reportedUser">
+                  <th mat-header-cell *matHeaderCellDef>Reported User</th>
+                  <td mat-cell *matCellDef="let report">
+                    {{ report.reportedUser?.username || 'Unknown' }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="reportingUser">
+                  <th mat-header-cell *matHeaderCellDef>Reporting User</th>
+                  <td mat-cell *matCellDef="let report">
+                    {{ report.reportingUser?.username || 'Unknown' }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="reason">
+                  <th mat-header-cell *matHeaderCellDef>Reason</th>
+                  <td mat-cell *matCellDef="let report">
+                    {{ report.reason }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="timestamp">
+                  <th mat-header-cell *matHeaderCellDef>Date</th>
+                  <td mat-cell *matCellDef="let report">
+                    {{ formatDate(report.timestamp) }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="actions">
+                  <th mat-header-cell *matHeaderCellDef>Actions</th>
+                  <td mat-cell *matCellDef="let report">
+                    <button 
+                      mat-raised-button 
+                      color="primary" 
+                      (click)="resolveReport(report)">
+                      <!-- <mat-icon>check</mat-icon> -->
+                      Resolve
+                    </button>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="reportsColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: reportsColumns;"></tr>
+              </table>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- Users Management -->
+        <mat-tab label="Users">
+          <div class="tab-content">
+            <div class="table-container">
+              <table mat-table [dataSource]="users" class="users-table">
+                <ng-container matColumnDef="username">
+                  <th mat-header-cell *matHeaderCellDef>Username</th>
+                  <td mat-cell *matCellDef="let user">
+                    <div class="user-cell">
+                      <img 
+                        [src]="user.profileImage || 'assets/default-avatar.png'" 
+                        alt="Profile" 
+                        class="user-avatar">
+                      <span>{{ user.username }}</span>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="role">
+                  <th mat-header-cell *matHeaderCellDef>Role</th>
+                  <td mat-cell *matCellDef="let user">
+                    <mat-chip [color]="user.role === 'Admin' ? 'accent' : 'primary'">
+                      {{ user.role }}
+                    </mat-chip>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="postsCount">
+                  <th mat-header-cell *matHeaderCellDef>Posts</th>
+                  <td mat-cell *matCellDef="let user">
+                    {{ getPostsCount(user.userId) }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="actions">
+                  <th mat-header-cell *matHeaderCellDef>Actions</th>
+                  <td mat-cell *matCellDef="let user">
+                    <button mat-icon-button [matMenuTriggerFor]="userActions">
+                      <!-- <mat-icon>more_vert</mat-icon> -->
+                    </button>
+                    <mat-menu #userActions="matMenu">
+                      <button mat-menu-item>
+                        <!-- <mat-icon>visibility</mat-icon> -->
+                        <span>View Profile</span>
+                      </button>
+                      <button mat-menu-item>
+                        <!-- <mat-icon>block</mat-icon> -->
+                        <span>Block User</span>
+                      </button>
+                    </mat-menu>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="usersColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: usersColumns;"></tr>
+              </table>
+            </div>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-card>
+  </div>
+</div>

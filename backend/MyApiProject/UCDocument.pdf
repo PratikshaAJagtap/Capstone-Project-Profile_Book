@@ -1,0 +1,115 @@
+Use Case Document – MyProfileBook
+1. Title:
+
+Social Media Web App – MyProfileBook
+
+2. Actors:
+
+User
+
+Admin
+
+3. Use Cases:
+🔐 Use Case: User Login
+
+Actor: User
+
+Description: Authenticates existing users using username and password.
+
+Pre-condition: User must be registered.
+
+Post-condition: User is logged in and redirected to the dashboard.
+
+Normal Flow:
+
+User enters username and password.
+
+System verifies credentials.
+
+JWT token is returned.
+
+User gains access to app features.
+
+📝 Use Case: User Registration
+
+Actor: New User
+
+Description: Allows new users to register.
+
+Pre-condition: User is not already registered.
+
+Post-condition: New account is created.
+
+Normal Flow:
+
+User submits registration form.
+
+System checks for existing username.
+
+Password is hashed and user data is saved.
+
+Success response is sent.
+
+📤 Use Case: Create Post
+
+Actor: Registered User
+
+Description: Users can post content and images.
+
+Pre-condition: User is logged in.
+
+Post-condition: Post appears on timeline.
+
+Normal Flow:
+
+User creates a post with text/image.
+
+Post is saved in database.
+
+Post is visible to others.
+
+💬 Use Case: Send Message
+
+Actor: User
+
+Description: Users can send direct messages to other users.
+
+Pre-condition: Sender and Receiver exist.
+
+Post-condition: Message is stored and viewable.
+
+Normal Flow:
+
+User selects recipient and writes a message.
+
+Message is stored with timestamp.
+
+Receiver can view the message.
+
+🚩 Use Case: Report User
+
+Actor: Any User
+
+Description: Users can report other users for inappropriate behavior.
+
+Pre-condition: Reporter and Reported users exist.
+
+Post-condition: Admin reviews reports.
+
+Normal Flow:
+
+User selects another user to report.
+
+Provides reason and submits report.
+
+Report is saved for admin review.
+
+4. System Requirements
+
+ASP.NET Core Web API
+
+Angular Frontend
+
+Entity Framework Core (ORM)
+
+SQL Server
