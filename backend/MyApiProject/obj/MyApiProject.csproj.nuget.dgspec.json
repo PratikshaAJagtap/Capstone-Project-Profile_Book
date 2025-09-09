@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Pratiksha\\Desktop\\ProfileBookRunningProrams\\MyProfileBook\\backend\\MyApiProject\\MyApiProject.csproj": {}
+    "C:\\Users\\Pratiksha\\Desktop\\CapstoneProject-Profile_Book\\MyProfileBook\\backend\\MyApiProject\\MyApiProject.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Pratiksha\\Desktop\\ProfileBookRunningProrams\\MyProfileBook\\backend\\MyApiProject\\MyApiProject.csproj": {
+    "C:\\Users\\Pratiksha\\Desktop\\CapstoneProject-Profile_Book\\MyProfileBook\\backend\\MyApiProject\\MyApiProject.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Pratiksha\\Desktop\\ProfileBookRunningProrams\\MyProfileBook\\backend\\MyApiProject\\MyApiProject.csproj",
+        "projectUniqueName": "C:\\Users\\Pratiksha\\Desktop\\CapstoneProject-Profile_Book\\MyProfileBook\\backend\\MyApiProject\\MyApiProject.csproj",
         "projectName": "MyApiProject",
-        "projectPath": "C:\\Users\\Pratiksha\\Desktop\\ProfileBookRunningProrams\\MyProfileBook\\backend\\MyApiProject\\MyApiProject.csproj",
+        "projectPath": "C:\\Users\\Pratiksha\\Desktop\\CapstoneProject-Profile_Book\\MyProfileBook\\backend\\MyApiProject\\MyApiProject.csproj",
         "packagesPath": "C:\\Users\\Pratiksha\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Pratiksha\\Desktop\\ProfileBookRunningProrams\\MyProfileBook\\backend\\MyApiProject\\obj\\",
+        "outputPath": "C:\\Users\\Pratiksha\\Desktop\\CapstoneProject-Profile_Book\\MyProfileBook\\backend\\MyApiProject\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -77,6 +77,10 @@
               "version": "[9.0.8, )"
             },
             "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[9.0.4, )"
+            },
+            "Swashbuckle.AspNetCore.Annotations": {
               "target": "Package",
               "version": "[9.0.4, )"
             }

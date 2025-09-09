@@ -42,5 +42,27 @@ namespace MyApiProject.Controllers
             _context.SaveChanges();
             return Ok("User updated");
         }
+
+        [AllowAnonymous]  // Usually registration is open
+        [HttpPost]
+        public IActionResult CreateUser(User newUser)
+        {
+            _context.Users.Add(newUser);
+            _context.SaveChanges();
+            return Ok("User created successfully");
+        }
+
+        [HttpDelete("{id}")]
+public IActionResult DeleteUser(int id)
+{
+    var user = _context.Users.Find(id);
+    if (user == null) return NotFound();
+
+    _context.Users.Remove(user);
+    _context.SaveChanges();
+    return Ok("User deleted");
+}
     }
+
+    
 }

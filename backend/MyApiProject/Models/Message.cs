@@ -1,19 +1,27 @@
 namespace MyApiProject.Models;
+using System.ComponentModel.DataAnnotations;
+using Swashbuckle.AspNetCore.Annotations;
 
 public class Message
 {
+    [SwaggerSchema("The ID of the message", ReadOnly = true)]
     public int MessageId { get; set; }
 
-    // Foreign Key for Sender (User)
+    [SwaggerSchema("ID of the sender")]
     public int SenderId { get; set; }
-    public User Sender { get; set; } = null!;
 
-    // Foreign Key for Receiver (User)
+    [SwaggerSchema("Name of the sender", Example = "admin")]
+    public string Sender { get; set; }
+
+    [SwaggerSchema("ID of the receiver")]
     public int ReceiverId { get; set; }
-    public User Receiver { get; set; } = null!;
 
-    public string MessageContent { get; set; } = string.Empty;
+    [SwaggerSchema("Name of the receiver", Example = "john_doe")]
+    public string Receiver { get; set; }
 
-    // Default to current time when the message is created
-    public DateTime Timestamp { get; set; } = DateTime.Now;
+    [SwaggerSchema("The message content", Example = "Hello, how are you?")]
+    public string MessageContent { get; set; }
+
+    [SwaggerSchema("Message timestamp", Example = "2025-09-09T04:35:46.605Z")]
+    public DateTime Timestamp { get; set; }
 }
